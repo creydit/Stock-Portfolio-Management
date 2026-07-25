@@ -1,7 +1,17 @@
 # 📈 Sentiment-Driven Portfolio Optimization & Management
 
-An end-to-end Quantitative Finance and Natural Language Processing (NLP) framework that integrates classical Machine Learning, Transformer architectures, and Lexicon-based sentiment models to dynamically tilt portfolio asset weights and backtest risk-adjusted returns against market baselines.
+## 🎯 Overview
 
+Stock prices react fast to news, but traditional portfolio models only look at past prices. 
+This project builds an automated **Quantitative Sentiment Pipeline** that analyzes real-time financial headlines using five distinct NLP models, combines their predictions into a single **Ensemble Score**, and automatically rebalances portfolio stock weights to improve risk-adjusted returns.
+
+### ⚡ What It Does
+* **Scrapes Real-Time News:** Fetches corporate news headlines and daily market pricing using `yfinance`.
+* **Multi-Model Scoring:** Evaluates headlines using **FinBERT**, **ReyZer** (a custom TF-IDF + Logistic Regression model trained on Financial PhraseBank), **VADER**, **TextBlob**, and **AFINN**.
+* **Consensus Ensemble Engine:** Combines Transformer, classical ML, and lexicon scores into one balanced sentiment signal:
+  $$\text{Ensemble Score} = 0.35(\text{FinBERT}) + 0.35(\text{ReyZer}) + 0.15(\text{VADER}) + 0.15(\text{TextBlob})$$
+* **Dynamic Portfolio Tilting:** Shifts baseline portfolio weights ($1/N$) toward high-sentiment stocks while keeping total allocation at $100\%$.
+* **Backtesting & Analytics:** Calculates Annualized Return, Risk (Volatility), and Sharpe Ratio against the equal-weighted baseline portfolio.
 ---
 
 ## 🛠️ System Architecture Blueprint
@@ -9,8 +19,8 @@ An end-to-end Quantitative Finance and Natural Language Processing (NLP) framewo
 ```mermaid
 graph TD
     %% Input Nodes
-    A[1. News Headlines] -->|Scraped via YFinance| C[3. Multi-Model Sentiment Engine]
-    B[2. Financial PhraseBank Data] -->|Parquet Format| M[Custom Trainer: ReyZer]
+    A[1. News Headlines] -->|Scraped via Finviz & Google News| C[3. Multi-Model Sentiment Engine]
+    B[2. Financial PhraseBank Data] --> M[Custom Trainer: ReyZer]
     M -->|TF-IDF + LogReg| C
 
     %% Sentiment Suite
@@ -32,7 +42,7 @@ graph TD
     D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
     
     %% Backtest
-    E -->|w_new = w_0 * 1 + gamma * S| F[6. Backtest & Risk Engine]
+    E -->|w_new = w_0 * ( 1 + gamma * S) | F[6. Backtested]
     F --> G[Metrics: Return, Volatility, Sharpe Ratio]
 ```
 ## 💡 Key Features
@@ -94,3 +104,24 @@ $$w_i^{\text{final}} = \frac{w_i^{\text{clipped}}}{\sum_{j=1}^{N} w_j^{\text{cli
   $$\text{Sharpe} = \frac{E[R_p]}{\sigma_p}$$
 
 ---
+## 📊 Dataset & Model Training
+
+The custom **ReyZer** sentiment model is trained on the benchmark **Financial PhraseBank** dataset (`gtfintechlab/financial_phrasebank_sentences_allagree`).
+
+* **Total Samples:** 2,264 human-annotated financial headlines with 100% agreement.
+* **Train/Test Split:** 80% Training, 20% Testing (Stratified by class label).
+* **Feature Extraction:** `TfidfVectorizer` (Unigrams & Bigrams, Top 5,000 features).
+* **Classifier:** `LogisticRegression` (L2 Regularization, $C=1.0$).
+---
+## 📈 Visualizations & Strategy Performance
+
+The pipeline generates two core visual insights:
+
+1. **Strategy Performance Comparison:** Side-by-side bar chart evaluating Return, Volatility (Risk), and Sharpe Ratio across individual sentiment models vs. the **Combined Ensemble Strategy**.
+2. **Asset Allocation Shift:** A weight-tilting comparison chart showing how stock weights shifted from the equal-weighted baseline ($1/N$) into the final sentiment-adjusted portfolio.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
