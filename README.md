@@ -27,6 +27,7 @@ graph TD
     C2 --> D
     C3 --> D
     C4 --> D
+    C5 --> D
     
     D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
     
