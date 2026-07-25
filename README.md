@@ -6,43 +6,34 @@ An end-to-end Quantitative Finance and Natural Language Processing (NLP) framewo
 
 ## 🛠️ System Architecture Blueprint
 
-[1. News Headlines]              [2. Training Data]
-Scraped via YFinance          Financial PhraseBank (Parquet)
-│                                  │
-▼                                  ▼
-┌──────────────────────┐           ┌──────────────────────┐
-│  Raw Text Headlines  │           │ Custom Model Trainer │
-└──────────┬───────────┘           │  (TF-IDF + LogReg)   │
-│                       └──────────┬───────────┘
-│                                  │
-├──────────────────────────────────┘
-▼
-┌────────────────────────────────────────────────────────┐
-│            3. Multi-Model Sentiment Engine             │
-│  ┌──────────┬──────────┬──────────┬──────────┬───────┐ │
-│  │ FinBERT  │  ReyZer  │  VADER   │ TextBlob │ AFINN │ │
-│  └────┬─────┴────┬─────┴────┬─────┴────┬─────┴───┬───┘ │
-└───────┼──────────┼──────────┼──────────┼─────────┼─────┘
-└──────────┴────┬─────┴──────────┴─────────┘
-▼
-┌──────────────────────────────────┐
-│  4. Weighted Consensus Ensemble  │
-│    (0.35FB + 0.35RZ + 0.15VD...) │
-└────────────────┬─────────────────┘
-▼
-┌──────────────────────────────────┐
-│   5. Sentiment Portfolio Tilt    │
-│      w_new = w_0 * (1 + γ * s)   │
-└────────────────┬─────────────────┘
-▼
-┌──────────────────────────────────┐
-│  6. Backtest & Risk Engine       │
-│  Annual Return, Risk, Sharpe Ratio │
-└──────────────────────────────────┘
+```
+graph TD
+    %% Input Nodes
+    A[1. News Headlines] -->|Scraped via YFinance| C[3. Multi-Model Sentiment Engine]
+    B[2. Financial PhraseBank Data] -->|Parquet Format| M[Custom Trainer: ReyZer]
+    M -->|TF-IDF + LogReg| C
 
+    %% Sentiment Suite
+    subgraph C [3. Multi-Model Sentiment Engine]
+        C1[FinBERT]
+        C2[ReyZer]
+        C3[VADER]
+        C4[TextBlob]
+        C5[AFINN]
+    end
 
----
-
+    %% Consensus & Tilting
+    C1 --> D[4. Weighted Consensus Ensemble]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    
+    D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
+    
+    %% Backtest
+    E -->|w_new = w_0 * 1 + gamma * S| F[6. Backtest & Risk Engine]
+    F --> G[Metrics: Return, Volatility, Sharpe Ratio]
+```
 ## 💡 Key Features
 
 * **Custom Statistical Model ("ReyZer"):** Built using TF-IDF n-gram vectorization and Logistic Regression trained directly on the *Financial PhraseBank* dataset.
