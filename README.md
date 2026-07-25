@@ -122,6 +122,3 @@ The pipeline generates two core visual insights:
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
