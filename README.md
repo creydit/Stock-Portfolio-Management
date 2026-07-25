@@ -42,7 +42,7 @@ graph TD
     D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
     
     %% Backtest
-    E -->|w_new = w_0 * ( 1 + gamma * S) | F[6. Backtested]
+    E -->|"w_new = w_0 * (1 + gamma * S)"| F[6. Backtested]
     F --> G[Metrics: Return, Volatility, Sharpe Ratio]
 ```
 ## 💡 Key Features
