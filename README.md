@@ -1,4 +1,4 @@
-# 📈 Sentiment-Driven Portfolio Optimization & Quantitative Trading Pipeline
+# 📈 Sentiment-Driven Portfolio Optimization & Management
 
 An end-to-end Quantitative Finance and Natural Language Processing (NLP) framework that integrates classical Machine Learning, Transformer architectures, and Lexicon-based sentiment models to dynamically tilt portfolio asset weights and backtest risk-adjusted returns against market baselines.
 
