@@ -6,7 +6,7 @@ An end-to-end Quantitative Finance and Natural Language Processing (NLP) framewo
 
 ## 🛠️ System Architecture Blueprint
 
-```
+```mermaid
 graph TD
     %% Input Nodes
     A[1. News Headlines] -->|Scraped via YFinance| C[3. Multi-Model Sentiment Engine]
