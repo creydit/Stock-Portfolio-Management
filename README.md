@@ -83,9 +83,9 @@ $$S_{\text{Ensemble}} = 0.35 \cdot S_{\text{FinBERT}} + 0.35 \cdot S_{\text{ReyZ
 ---
 
 ### 3. Sentiment Portfolio Tilting
-Given an equal-weighted baseline portfolio $w_0 = \frac{1}{N}$, each asset weight $w_i$ is tilted by sentiment score $S_i$ using sensitivity factor $\gamma = 0.5$:
+Given a user-defined baseline portfolio $w_{\text{user}}$, each asset weight $w_i$ is tilted by its ensemble sentiment score $S_i$ using sensitivity factor $\gamma = 0.5$:
 
-$$w_i^{\text{raw}} = w_i^0 \cdot (1 + \gamma \cdot S_i)$$
+$$w_i^{\text{raw}} = w_i^{\text{user}} \cdot (1 + \gamma \cdot S_i)$$
 
 To enforce a **long-only portfolio** constraint and ensure weights sum to $100\%$:
 
