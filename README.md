@@ -118,7 +118,7 @@ The custom **ReyZer** sentiment model is trained on the benchmark **Financial Ph
 The pipeline generates two core visual insights:
 
 1. **Strategy Performance Comparison:** Side-by-side bar chart evaluating Return, Volatility (Risk), and Sharpe Ratio across individual sentiment models vs. the **Combined Ensemble Strategy**.
-2. **Asset Allocation Shift:** A weight-tilting comparison chart showing how stock weights shifted from the equal-weighted baseline ($1/N$) into the final sentiment-adjusted portfolio.
+2. **Asset Allocation Shift:** A weight-tilting comparison chart showing how stock weights shifted from the baseline portfolio into the final sentiment-adjusted portfolio.
 
 ---
 
