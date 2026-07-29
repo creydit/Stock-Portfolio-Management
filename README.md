@@ -18,33 +18,26 @@ This project builds an automated **Quantitative Sentiment Pipeline** that analyz
 
 ```mermaid
 graph TD
-    A[Financial News Headlines] --> B[Sentiment Analysis]
-    C[Financial PhraseBank] --> D[Train ReyZer Model]
-    D --> B
+    A[1. News Headlines] -->|Scraped via Finviz & Google News| C[3. Sentiment Engine]
+    B[2. Financial PhraseBank Data] --> M[Custom Trainer: ReyZer]
+    M -->|TF-IDF + LogReg| C
 
-    subgraph Sentiment Models
-        E[FinBERT]
-        F[ReyZer]
-        G[VADER]
-        H[TextBlob]
-        I[AFINN]
+    subgraph C [3. Multi-Model Sentiment Engine]
+        C1[FinBERT]
+        C2[ReyZer]
+        C3[VADER]
+        C4[TextBlob]
     end
 
-    B --> E
-    B --> F
-    B --> G
-    B --> H
-    B --> I
-
-    E --> J[Weighted Ensemble]
-    F --> J
-    G --> J
-    H --> J
-    I --> J
-
-    J --> K[Portfolio Weight Adjustment]
-    K --> L[Backtesting]
-    L --> M[Performance Metrics]
+    C1 --> D[4. Weighted Consensus Ensemble]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    
+    D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
+    
+    E -->|"w_new = w_0 * (1 + gamma * S)"| F[6. Backtest Engine]
+    F --> G[Metrics: Return, Volatility, Sharpe Ratio]
 ```
 ## 💡 Key Features
 
