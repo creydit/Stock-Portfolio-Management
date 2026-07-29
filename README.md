@@ -95,7 +95,7 @@ $$w_i^{\text{final}} = \frac{w_i^{\text{clipped}}}{\sum_{j=1}^{N} w_j^{\text{cli
 * **Annualized Volatility (Risk):**
   $$\sigma_p = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w} \cdot 252}$$
 * **Sharpe Ratio:**
-  $$\text{Sharpe} = \frac{E[R_p]}{\sigma_p}$$
+  $$\text{Sharpe} = \frac{E[R_p] - R_f}{\sigma_p}$$
 
 ---
 ## 📊 Dataset & Model Training
