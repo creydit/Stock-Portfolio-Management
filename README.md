@@ -10,7 +10,7 @@ This project builds an automated **Quantitative Sentiment Pipeline** that analyz
 * **Multi-Model Scoring:** Evaluates headlines using **FinBERT**, **ReyZer** (a custom TF-IDF + Logistic Regression model trained on Financial PhraseBank), **VADER**, **TextBlob**, and **AFINN**.
 * **Consensus Ensemble Engine:** Combines Transformer, classical ML, and lexicon scores into one balanced sentiment signal:
   $$\text{Ensemble Score} = 0.35(\text{FinBERT}) + 0.35(\text{ReyZer}) + 0.15(\text{VADER}) + 0.15(\text{TextBlob})$$
-* **Dynamic Portfolio Tilting:** Shifts baseline portfolio weights ($1/N$) toward high-sentiment stocks while keeping total allocation at $100\%$.
+* **Dynamic Portfolio Tilting:** Shifts baseline portfolio weights toward high-sentiment stocks while keeping total allocation at $100\%$.
 * **Backtesting & Analytics:** Calculates Annualized Return, Risk (Volatility), and Sharpe Ratio against the equal-weighted baseline portfolio.
 ---
 
