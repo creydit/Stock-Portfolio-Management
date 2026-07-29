@@ -8,7 +8,7 @@ This project builds an automated **Quantitative Sentiment Pipeline** that analyz
 ### ⚡ What It Does
 * **Scrapes Real-Time News:** Fetches corporate news headlines and daily market pricing using `yfinance`.
 * **Multi-Model Scoring:** Evaluates headlines using **FinBERT**, **ReyZer** (a custom TF-IDF + Logistic Regression model trained on Financial PhraseBank), **VADER**, **TextBlob**, and **AFINN**.
-* **Consensus Ensemble Engine:** Combines Transformer, classical ML, and lexicon scores into one balanced sentiment signal:
+* **Combined Ensemble Engine:** Combines Transformer, classical ML, and lexicon scores into one balanced sentiment signal:
   $$\text{Ensemble Score} = 0.35(\text{FinBERT}) + 0.35(\text{ReyZer}) + 0.15(\text{VADER}) + 0.15(\text{TextBlob})$$
 * **Dynamic Portfolio Tilting:** Shifts baseline portfolio weights toward high-sentiment stocks while keeping total allocation at $100\%$.
 * **Backtesting & Analytics:** Calculates Annualized Return, Risk (Volatility), and Sharpe Ratio against the equal-weighted baseline portfolio.
@@ -18,32 +18,33 @@ This project builds an automated **Quantitative Sentiment Pipeline** that analyz
 
 ```mermaid
 graph TD
-    %% Input Nodes
-    A[1. News Headlines] -->|Scraped via Finviz & Google News| C[3. Multi-Model Sentiment Engine]
-    B[2. Financial PhraseBank Data] --> M[Custom Trainer: ReyZer]
-    M -->|TF-IDF + LogReg| C
+    A[Financial News Headlines] --> B[Sentiment Analysis]
+    C[Financial PhraseBank] --> D[Train ReyZer Model]
+    D --> B
 
-    %% Sentiment Suite
-    subgraph C [3. Multi-Model Sentiment Engine]
-        C1[FinBERT]
-        C2[ReyZer]
-        C3[VADER]
-        C4[TextBlob]
-        C5[AFINN]
+    subgraph Sentiment Models
+        E[FinBERT]
+        F[ReyZer]
+        G[VADER]
+        H[TextBlob]
+        I[AFINN]
     end
 
-    %% Consensus & Tilting
-    C1 --> D[4. Weighted Consensus Ensemble]
-    C2 --> D
-    C3 --> D
-    C4 --> D
-    C5 --> D
-    
-    D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
-    
-    %% Backtest
-    E -->|"w_new = w_0 * (1 + gamma * S)"| F[6. Backtested]
-    F --> G[Metrics: Return, Volatility, Sharpe Ratio]
+    B --> E
+    B --> F
+    B --> G
+    B --> H
+    B --> I
+
+    E --> J[Weighted Ensemble]
+    F --> J
+    G --> J
+    H --> J
+    I --> J
+
+    J --> K[Portfolio Weight Adjustment]
+    K --> L[Backtesting]
+    L --> M[Performance Metrics]
 ```
 ## 💡 Key Features
 
