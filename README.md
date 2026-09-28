@@ -1,118 +1,348 @@
-# 📈 Sentiment-Driven Portfolio Optimization & Management
 
-## 🎯 Overview
+# Sentock
+### Financial News Sentiment Analysis & Stock Portfolio Management
 
-Stock prices react fast to news, but traditional portfolio models only look at past prices. 
-This project builds an automated **Quantitative Sentiment Pipeline** that analyzes real-time financial headlines using five distinct NLP models, combines their predictions into a single **Ensemble Score**, and automatically rebalances portfolio stock weights to improve risk-adjusted returns.
+Sentock is a financial news sentiment analysis project that combines natural language processing, machine learning, and a web application to analyze the sentiment of financial headlines associated with selected stocks.
 
-### ⚡ What It Does
-* **Scrapes Real-Time News:** Fetches corporate news headlines and daily market pricing using `yfinance`.
-* **Multi-Model Scoring:** Evaluates headlines using **FinBERT**, **ReyZer** (a custom TF-IDF + Logistic Regression model trained on Financial PhraseBank), **VADER**, **TextBlob**, and **AFINN**.
-* **Combined Ensemble Engine:** Combines Transformer, classical ML, and lexicon scores into one balanced sentiment signal:
-  $$\text{Ensemble Score} = 0.35(\text{FinBERT}) + 0.35(\text{ReyZer}) + 0.15(\text{VADER}) + 0.15(\text{TextBlob})$$
-* **Dynamic Portfolio Tilting:** Shifts baseline portfolio weights toward high-sentiment stocks while keeping total allocation at $100\%$.
-* **Backtesting & Analytics:** Calculates Annualized Return, Risk (Volatility), and Sharpe Ratio against the equal-weighted baseline portfolio.
+The project consists of a research notebook and a web application with a FastAPI backend and a browser-based frontend.
+
 ---
 
-## 🛠️ System Architecture Blueprint
+## Overview
+
+Financial news provides information that can influence how market participants perceive a company. Sentock explores the use of sentiment analysis to process financial headlines and derive sentiment signals for stocks.
+
+The application collects financial news headlines, processes them through multiple sentiment analysis models, and combines their outputs using a weighted ensemble.
+
+The repository also contains the original research notebook, custom model training code, and saved model artifacts.
+
+## Features
+
+- **Financial news collection:** Retrieves financial headlines using Google News RSS and Finviz.
+- **Multi-model sentiment analysis:** Uses FinBERT, ReyZer, VADER, and TextBlob.
+- **Weighted ensemble:** Combines model sentiment scores into a single ensemble signal.
+- **Custom sentiment classifier:** Includes a TF-IDF and Logistic Regression model trained on Financial PhraseBank.
+- **Web application:** Provides a frontend for submitting stock tickers and viewing analysis results.
+- **Research notebook:** Preserves the original stock sentiment and portfolio management experiments.
+
+---
+
+## Technology Stack
+
+| Component | Technologies |
+|---|---|
+| Programming languages | Python, JavaScript, HTML, CSS |
+| Backend | FastAPI, Uvicorn |
+| Machine learning | scikit-learn, Joblib, NumPy |
+| Transformer model | FinBERT, Hugging Face Transformers |
+| Sentiment analysis | VADER, TextBlob |
+| News collection | Requests, BeautifulSoup, Google News RSS |
+| Frontend | HTML, CSS, JavaScript |
+| Research | Jupyter Notebook |
+
+---
+
+## System Architecture
+
+The web application follows a simple request-and-response architecture.
 
 ```mermaid
-graph TD
-    A[1. News Headlines] -->|Scraped via Finviz & Google News| C[3. Sentiment Engine]
-    B[2. Financial PhraseBank Data] --> M[Custom Trainer: ReyZer]
-    M -->|TF-IDF + LogReg| C
+flowchart TD
+    A[User enters stock ticker]
+    B[FastAPI Backend]
+    C[Stock Ticker Validation]
+    D[Financial News Collection]
+    E[Headline Sentiment Analysis]
+    F[Weighted Ensemble]
+    G[Analysis Results]
+    H[Frontend]
 
-    subgraph C [3. Multi-Model Sentiment Engine]
-        C1[FinBERT]
-        C2[ReyZer]
-        C3[VADER]
-        C4[TextBlob]
-    end
-
-    C1 --> D[4. Weighted Consensus Ensemble]
-    C2 --> D
-    C3 --> D
-    C4 --> D
-    
-    D -->|Ensemble Score S_i| E[5. Portfolio Weight Tilting]
-    
-    E -->|"w_new = w_0 * (1 + gamma * S)"| F[6. Backtest Engine]
-    F --> G[Metrics: Return, Volatility, Sharpe Ratio]
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
 ```
-## 💡 Key Features
 
-* **Custom Statistical Model ("ReyZer"):** Built using TF-IDF n-gram vectorization and Logistic Regression trained directly on the *Financial PhraseBank* dataset.
-* **Transformer Sentiment Engine:** Leverages `FinBERT` (`ProsusAI/finbert`) for context-aware financial sentiment analysis.
-* **Lexicon Suite:** Integrates `VADER`, `TextBlob`, and `AFINN` for multi-perspective text processing.
-* **Consensus Ensemble Strategy:** Blends outputs from deep learning, classical ML, and lexicons into a unified sentiment signal.
-* **Quantitative Asset Allocation:** Dynamically adjusts baseline portfolio weights via sentiment factor tilting.
-* **Backtesting & Portfolio Analytics:** Evaluates Annualized Returns, Volatility (Risk), and Sharpe Ratios.
+### Application flow
 
----
-
-## 🧠 Mathematical Foundations
-
-### 1. TF-IDF & Custom Classifier ("ReyZer")
-Words are transformed into continuous vector spaces using **Term Frequency - Inverse Document Frequency**:
-
-$$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \log\left(\frac{N}{\text{DF}(t)}\right)$$
-
-Where $t$ represents unigrams/bigrams, $d$ is a headline, and $N$ is total documents.
-
-The predicted class probabilities $P(y=k \mid \mathbf{x})$ are output via the **Softmax function**:
-
-$$P(y=k \mid \mathbf{x}) = \frac{e^{\mathbf{w}_k^T \mathbf{x} + b_k}}{\sum_{j=0}^{2} e^{\mathbf{w}_j^T \mathbf{x} + b_j}}$$
-
-The continuous score $S_i \in [-1.0, +1.0]$ is derived as:
-
-$$S_i = P(\text{Positive}) - P(\text{Negative})$$
+1. The user submits a stock ticker through the frontend.
+2. The backend validates the ticker.
+3. Financial headlines are collected from the configured news sources.
+4. The headlines are analyzed using the available sentiment models.
+5. The model outputs are combined into an ensemble sentiment score.
+6. The analysis results are returned to the frontend.
 
 ---
 
-### 2. Weighted Ensemble Formula
-To reduce single-model variance, scores are combined using a weighted consensus formula:
+## Sentiment Analysis Models
 
-$$S_{\text{Ensemble}} = 0.35 \cdot S_{\text{FinBERT}} + 0.35 \cdot S_{\text{ReyZer}} + 0.15 \cdot S_{\text{VADER}} + 0.15 \cdot S_{\text{TextBlob}}$$
+Sentock uses four sentiment analysis models. Each model approaches financial text differently.
+
+| Model | Method | Description |
+|---|---|---|
+| FinBERT | Transformer-based classification | Analyzes financial text using contextual language representations. |
+| ReyZer | TF-IDF and Logistic Regression | Custom binary financial sentiment classifier. |
+| VADER | Lexicon and rule-based analysis | Estimates sentiment polarity from lexical features and rules. |
+| TextBlob | Lexicon-based analysis | Provides polarity and subjectivity analysis. |
+
+### 1. FinBERT
+
+The application uses the pretrained `ProsusAI/finbert` model for financial sentiment classification.
+
+FinBERT is designed for financial text and is used to analyze the sentiment of financial headlines.
+
+The implementation supports CPU and CUDA inference, depending on the configured device and available hardware.
+
+Model: [ProsusAI/finbert](https://huggingface.co/ProsusAI/finbert)
+
+### 2. ReyZer — Custom Financial Sentiment Classifier
+
+ReyZer is a custom binary sentiment classifier developed using classical machine learning.
+
+The model uses TF-IDF feature extraction and Logistic Regression to classify financial headlines as positive or negative.
+
+The trained classifier and its vectorizer are saved using Joblib and loaded by the backend for inference.
+
+#### Dataset
+
+The training workflow uses the Financial PhraseBank dataset.
+
+Dataset: [Financial PhraseBank — Hugging Face](https://huggingface.co/datasets/gtfintechlab/financial_phrasebank_sentences_allagree)
+
+The all-agree configuration contains financial sentences for which the annotators agreed on the sentiment label.
+
+#### Sentiment score
+
+For a headline \(x\), ReyZer calculates a directional sentiment score from its predicted class probabilities:
+
+\[
+S_{\text{ReyZer}}(x)
+=
+P(\text{positive}\mid x)
+-
+P(\text{negative}\mid x)
+\]
+
+The score ranges from \(-1\) to \(+1\).
+
+- Positive values indicate a positive sentiment prediction.
+- Negative values indicate a negative sentiment prediction.
+- Values closer to zero indicate a weaker difference between the positive and negative probabilities.
+
+The current model is binary and does not independently predict a neutral class.
+
+The backend also returns a neutral field as a compatibility placeholder:
+
+\[
+N = 1 - |P(\text{positive})-P(\text{negative})|
+\]
+
+This value is not a calibrated neutral probability and should not be interpreted as one.
+
+### 3. VADER
+
+VADER is a lexicon- and rule-based sentiment analysis model.
+
+It provides a sentiment score based on the lexical characteristics and intensity of the input text.
+
+### 4. TextBlob
+
+TextBlob provides polarity and subjectivity analysis using a lexicon-based approach.
+
+Its output is incorporated into the sentiment analysis pipeline.
 
 ---
 
-### 3. Sentiment Portfolio Tilting
-Given a user-defined baseline portfolio $w_{\text{user}}$, each asset weight $w_i$ is tilted by its ensemble sentiment score $S_i$ using sensitivity factor $\gamma = 0.5$:
+## Weighted Ensemble
 
-$$w_i^{\text{raw}} = w_i^{\text{user}} \cdot (1 + \gamma \cdot S_i)$$
+The application combines the sentiment outputs using the following configured weights:
 
-To enforce a **long-only portfolio** constraint and ensure weights sum to $100\%$:
+| Model | Weight |
+|---|---:|
+| FinBERT | 40% |
+| ReyZer | 30% |
+| VADER | 15% |
+| TextBlob | 15% |
+| **Total** | **100%** |
 
-$$w_i^{\text{clipped}} = \max(w_i^{\text{raw}}, 0)$$
+The ensemble score is calculated as:
 
-$$w_i^{\text{final}} = \frac{w_i^{\text{clipped}}}{\sum_{j=1}^{N} w_j^{\text{clipped}}}$$
+\[
+\begin{aligned}
+S_{\text{ensemble}} ={}&
+0.40S_{\text{FinBERT}}\\
+&+0.30S_{\text{ReyZer}}\\
+&+0.15S_{\text{VADER}}\\
+&+0.15S_{\text{TextBlob}}
+\end{aligned}
+\]
 
----
+Here, each \(S\) represents the corresponding model's sentiment score as used by the backend.
 
-### 4. Portfolio Performance & Risk Metrics
-* **Annualized Expected Return:**
-  $$E[R_p] = \mathbf{w}^T \mathbf{\mu} \cdot 252$$
-* **Annualized Volatility (Risk):**
-  $$\sigma_p = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w} \cdot 252}$$
-* **Sharpe Ratio:**
-  $$\text{Sharpe} = \frac{E[R_p] - R_f}{\sigma_p}$$
-
----
-## 📊 Dataset & Model Training
-
-The custom **ReyZer** sentiment model is trained on the benchmark **Financial PhraseBank** dataset (`gtfintechlab/financial_phrasebank_sentences_allagree`).
-
-* **Total Samples:** 2,264 human-annotated financial headlines with 100% agreement.
-* **Train/Test Split:** 80% Training, 20% Testing (Stratified by class label).
-* **Feature Extraction:** `TfidfVectorizer` (Unigrams & Bigrams, Top 5,000 features).
-* **Classifier:** `LogisticRegression` (L2 Regularization, $C=1.0$).
----
-## 📈 Visualizations & Strategy Performance
-
-The pipeline generates two core visual insights:
-
-1. **Strategy Performance Comparison:** Side-by-side bar chart evaluating Return, Volatility (Risk), and Sharpe Ratio across individual sentiment models vs. the **Combined Ensemble Strategy**.
-2. **Asset Allocation Shift:** A weight-tilting comparison chart showing how stock weights shifted from the user's initial baseline portfolio ($w_{\text{user}}$) into the final sentiment-adjusted portfolio ($w_{\text{final}}$)
+The ensemble combines the outputs of the four models into a single sentiment signal. The weights above describe the current application configuration.
 
 ---
 
+## Repository Structure
+
+```text
+Stock-Portfolio-Management/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── news.py
+│   │   ├── news_collector.py
+│   │   └── models/
+│   │       ├── finbert.py
+│   │       ├── reyzer.py
+│   │       ├── vader.py
+│   │       └── textblob_model.py
+│   │
+│   ├── saved_models/
+│   │   ├── reyzer_model.joblib
+│   │   ├── reyzer_vectorizer.joblib
+│   │   ├── reyzer_balanced_model.joblib
+│   │   └── reyzer_balanced_vectorizer.joblib
+│   │
+│   ├── training/
+│   │   └── train_reyzer.py
+│   │
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── index.html
+│   ├── analyze.html
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       ├── main.js
+│       └── analyze.js
+│
+├── research/
+│   └── Sentiment_Analysis_Stock_Portfolio_Management.ipynb
+│
+├── .gitignore
+└── README.md
+```
+
+The `backend/` directory contains the API, news collection modules, sentiment models, and saved model artifacts.
+
+The `frontend/` directory contains the web interface and its associated styling and JavaScript.
+
+The `research/` directory contains the original Jupyter notebook used for the stock sentiment and portfolio management research.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python installed on your system.
+- Git.
+- A modern web browser.
+
+For GPU inference, a compatible NVIDIA GPU and CUDA-enabled PyTorch installation are required. CPU inference is also supported.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/creydit/Stock-Portfolio-Management.git
+
+cd Stock-Portfolio-Management
+```
+
+### 2. Create a virtual environment
+
+On Windows:
+
+```bash
+python -m venv .venv
+
+.venv\Scripts\activate
+```
+
+On Linux or macOS:
+
+```bash
+python3 -m venv .venv
+
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+Ensure that the installed PyTorch version is compatible with your hardware and Python environment.
+
+### 4. Start the backend
+
+From the repository root, run:
+
+```bash
+uvicorn app.main:app --app-dir backend --reload
+```
+
+The application should be accessible at:
+
+http://127.0.0.1:8000
+
+FastAPI interactive API documentation is available at:
+
+http://127.0.0.1:8000/docs
+
+The backend is configured to serve the frontend and handle analysis requests.
+
+---
+
+## Research: Stock Sentiment & Portfolio Management
+
+The `research/` directory contains the original Jupyter notebook:
+
+`Sentiment_Analysis_Stock_Portfolio_Management.ipynb`
+
+This notebook preserves the research and experimentation associated with financial sentiment analysis and stock portfolio management.
+
+The research explores the relationship between financial sentiment signals and portfolio allocation concepts.
+
+Research experiments and results should be interpreted in the context of the notebook's actual implementation and assumptions. They are separate from the current web application's functionality unless explicitly integrated into the backend.
+
+---
+
+## Future Work
+
+Potential areas for further development include:
+
+- Improving news collection and headline deduplication.
+- Evaluating sentiment models on additional financial datasets.
+- Integrating historical market data into portfolio analysis.
+- Extending the research with systematic backtesting and transaction costs.
+- Deploying the web application.
+
+These are potential extensions and are not claims about functionality currently implemented.
+
+---
+
+## Author
+
+**Shreyansh**  
+B.Tech, Computer Science and Engineering  
+National Institute of Technology, Raipur
+
+GitHub: [@creydit](https://github.com/creydit)
+
+---
+
+## Disclaimer
+
+Sentock is an educational and research-oriented project for financial sentiment analysis and stock portfolio management.
+
+The sentiment outputs are experimental and should not be interpreted as guarantees of market performance or investment returns.
+
+This project does not provide personalized financial advice or recommendations to buy or sell securities.
