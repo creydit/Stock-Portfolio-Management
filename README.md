@@ -136,23 +136,19 @@ Dataset: [Financial PhraseBank — Hugging Face](https://huggingface.co/datasets
 
 The all-agree configuration contains financial sentences for which the annotators agreed on the sentiment label.
 
-#### Sentiment score
+#### Sentiment Score
 
-For a headline \(x\), ReyZer calculates a directional sentiment score from its predicted class probabilities:
+For a headline `x`, ReyZer calculates a directional sentiment score from its predicted class probabilities:
 
-$$
-S_{\text{ReyZer}}(x)
-=
-P(\text{positive}\mid x)
--
-P(\text{negative}\mid x)
-$$
+> **Sentiment Score**
+>
+> `S_ReyZer(x) = P(positive | x) − P(negative | x)`
 
-The score ranges from \(-1\) to \(+1\).
+The score ranges from **−1 to +1**.
 
-- Positive values indicate a positive sentiment prediction.
-- Negative values indicate a negative sentiment prediction.
-- Values closer to zero indicate a weaker difference between the positive and negative probabilities.
+- **Positive score:** The positive class probability is higher.
+- **Negative score:** The negative class probability is higher.
+- **Score close to 0:** The positive and negative probabilities are close.
 
 The current model is binary and does not independently predict a neutral class.
 
