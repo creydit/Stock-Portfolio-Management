@@ -152,14 +152,6 @@ The score ranges from **−1 to +1**.
 
 The current model is binary and does not independently predict a neutral class.
 
-The backend also returns a neutral field as a compatibility placeholder:
-
-$$
-N = 1 - \left|P(\text{positive})-P(\text{negative})\right|
-$$
-
-This value is not a calibrated neutral probability and should not be interpreted as one.
-
 ### 3. VADER
 
 VADER is a lexicon- and rule-based sentiment analysis model.
