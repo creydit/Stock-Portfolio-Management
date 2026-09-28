@@ -1,6 +1,18 @@
 
-# Sentock
+<div align="center">
+
+# 📈 Sentock
+
 ### Financial News Sentiment Analysis & Stock Portfolio Management
+
+**A research project and web application for analyzing financial headlines and their sentiment signals.**
+
+![Python](https://img.shields.io/badge/Python-Backend-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)
+![JavaScript](https://img.shields.io/badge/Frontend-JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Status](https://img.shields.io/badge/Project-Educational%20%26%20Research-6C63FF)
+
+</div>
 
 Sentock is a financial news sentiment analysis project that combines natural language processing, machine learning, and a web application to analyze the sentiment of financial headlines associated with selected stocks.
 
@@ -8,7 +20,7 @@ The project consists of a research notebook and a web application with a FastAPI
 
 ---
 
-## Overview
+## 🧭 Overview
 
 Financial news provides information that can influence how market participants perceive a company. Sentock explores the use of sentiment analysis to process financial headlines and derive sentiment signals for stocks.
 
@@ -16,7 +28,7 @@ The application collects financial news headlines, processes them through multip
 
 The repository also contains the original research notebook, custom model training code, and saved model artifacts.
 
-## Features
+## ✨ Features
 
 - **Financial news collection:** Retrieves financial headlines using Google News RSS and Finviz.
 - **Multi-model sentiment analysis:** Uses FinBERT, ReyZer, VADER, and TextBlob.
@@ -27,7 +39,7 @@ The repository also contains the original research notebook, custom model traini
 
 ---
 
-## Technology Stack
+## 🧰 Technology Stack
 
 | Component | Technologies |
 |---|---|
@@ -42,7 +54,7 @@ The repository also contains the original research notebook, custom model traini
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
 The web application follows a simple request-and-response architecture.
 
@@ -64,6 +76,16 @@ flowchart TD
     E --> F
     F --> G
     G --> H
+
+    classDef user fill:#E8F1FF,stroke:#4776C5,color:#172B4D,stroke-width:1.5px;
+    classDef backend fill:#E7F6F2,stroke:#27856A,color:#123B31,stroke-width:1.5px;
+    classDef processing fill:#FFF3DB,stroke:#C58A22,color:#553A0B,stroke-width:1.5px;
+    classDef output fill:#F0EAFE,stroke:#8064C8,color:#30205E,stroke-width:1.5px;
+
+    class A,H user;
+    class B,C backend;
+    class D,E,F processing;
+    class G output;
 ```
 
 ### Application flow
@@ -77,7 +99,7 @@ flowchart TD
 
 ---
 
-## Sentiment Analysis Models
+## 🧠 Sentiment Analysis Models
 
 Sentock uses four sentiment analysis models. Each model approaches financial text differently.
 
@@ -118,13 +140,13 @@ The all-agree configuration contains financial sentences for which the annotator
 
 For a headline \(x\), ReyZer calculates a directional sentiment score from its predicted class probabilities:
 
-\[
+$$
 S_{\text{ReyZer}}(x)
 =
 P(\text{positive}\mid x)
 -
 P(\text{negative}\mid x)
-\]
+$$
 
 The score ranges from \(-1\) to \(+1\).
 
@@ -136,9 +158,9 @@ The current model is binary and does not independently predict a neutral class.
 
 The backend also returns a neutral field as a compatibility placeholder:
 
-\[
-N = 1 - |P(\text{positive})-P(\text{negative})|
-\]
+$$
+N = 1 - \left|P(\text{positive})-P(\text{negative})\right|
+$$
 
 This value is not a calibrated neutral probability and should not be interpreted as one.
 
@@ -156,7 +178,7 @@ Its output is incorporated into the sentiment analysis pipeline.
 
 ---
 
-## Weighted Ensemble
+## ⚖️ Weighted Ensemble
 
 The application combines the sentiment outputs using the following configured weights:
 
@@ -170,23 +192,23 @@ The application combines the sentiment outputs using the following configured we
 
 The ensemble score is calculated as:
 
-\[
+$$
 \begin{aligned}
 S_{\text{ensemble}} ={}&
-0.40S_{\text{FinBERT}}\\
-&+0.30S_{\text{ReyZer}}\\
-&+0.15S_{\text{VADER}}\\
-&+0.15S_{\text{TextBlob}}
+0.40S_{\text{FinBERT}} \\
+&+ 0.30S_{\text{ReyZer}} \\
+&+ 0.15S_{\text{VADER}} \\
+&+ 0.15S_{\text{TextBlob}}
 \end{aligned}
-\]
+$$
 
 Here, each \(S\) represents the corresponding model's sentiment score as used by the backend.
 
-The ensemble combines the outputs of the four models into a single sentiment signal. The weights above describe the current application configuration.
+> **Current configuration:** The ensemble combines the four model outputs into a single sentiment signal. The weights above reflect the current application configuration.
 
 ---
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```text
 Stock-Portfolio-Management/
@@ -237,7 +259,9 @@ The `research/` directory contains the original Jupyter notebook used for the st
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
+
+Follow these steps to run the application locally.
 
 ### Prerequisites
 
@@ -301,7 +325,7 @@ The backend is configured to serve the frontend and handle analysis requests.
 
 ---
 
-## Research: Stock Sentiment & Portfolio Management
+## 📓 Research: Stock Sentiment & Portfolio Management
 
 The `research/` directory contains the original Jupyter notebook:
 
@@ -315,7 +339,7 @@ Research experiments and results should be interpreted in the context of the not
 
 ---
 
-## Future Work
+## 🔭 Future Work
 
 Potential areas for further development include:
 
@@ -329,7 +353,7 @@ These are potential extensions and are not claims about functionality currently 
 
 ---
 
-## Author
+## 👤 Author
 
 **Shreyansh**  
 B.Tech, Computer Science and Engineering  
@@ -339,7 +363,7 @@ GitHub: [@creydit](https://github.com/creydit)
 
 ---
 
-## Disclaimer
+## ⚠️ Disclaimer
 
 Sentock is an educational and research-oriented project for financial sentiment analysis and stock portfolio management.
 
