@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Sentiment Analysis — Sentock</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="/" class="brand-logo">Sentock<span>.</span></a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/analyze" class="btn btn-primary">Portfolio Workspace</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Portfolio Sentiment Analyzer</h1>
+            <p style="color: var(--text-secondary);">Configure stock allocations and evaluate aggregated sentiment scores.</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="form-header">
+                <h3 style="font-size: 1.1rem;">Enter Your Portfolio Holdings</h3>
+                <button type="button" id="btn-add-stock" class="btn btn-secondary" style="font-size: 0.82rem;">+ Add Stock</button>
+            </div>
+
+            <form id="portfolio-form">
+                <div id="stocks-container">
+                    <!-- Dynamic stock input rows appended here -->
+                </div>
+
+                <div class="allocation-tracker">
+                    <div>
+                        <span>Total Portfolio Weight: </span>
+                        <span id="total-weight-display" class="alloc-badge alloc-invalid">0%</span>
+                    </div>
+                    <span id="validation-message" style="color: var(--sentiment-neg); font-size: 0.85rem;">Weights must equal 100%</span>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                    <button type="submit" id="btn-analyze" class="btn btn-primary" disabled>
+                        <span>Analyze Portfolio</span>
+                    </button>
+                    <button type="button" id="btn-sample" class="btn btn-secondary" style="font-size: 0.85rem;">Load Sample Portfolio</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Status / Error Banner -->
+        <div id="status-banner" style="display: none; margin-top: 1.5rem;" class="glass-card"></div>
+
+        <!-- Results Interface -->
+        <div id="results-section" class="results-container" style="display: none;">
+           
+            <!-- Portfolio Visualization Charts -->
+
+        <div class="charts-grid">
+
+            <div class="glass-card chart-card">
+                <h3>Sentiment by Stock</h3>
+                <p class="chart-description">
+                    Compare sentiment scores across your holdings.
+                </p>
+
+                <div class="chart-container">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card chart-card">
+                <h3>Portfolio Allocation</h3>
+                <p class="chart-description">
+                    Compare your original allocation with the sentiment-adjusted allocation.
+                </p>
+
+                <div class="chart-container">
+                    <canvas id="allocationChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+        
+<!-- Sentiment Verdict Card -->
+<div class="glass-card verdict-card" id="sentiment-verdict">
+    <div class="verdict-header">
+        <div>
+            <h3>Portfolio Sentiment Verdict</h3>
+            <p class="chart-description">
+                Model-based signals from the analyzed financial news.
+            </p>
+        </div>
+        <span class="score-badge badge-neutral" id="verdict-overall-badge">
+            Analyzing
+        </span>
+    </div>
+
+    <div class="verdict-columns">
+        <div class="verdict-group positive-group">
+            <h4>Positive Sentiment</h4>
+            <p>Consider reviewing these holdings for a possible increase in allocation.</p>
+            <div id="verdict-positive-list">
+                <span class="verdict-empty">No results yet.</span>
+            </div>
+        </div>
+
+        <div class="verdict-group negative-group">
+            <h4>Negative Sentiment</h4>
+            <p>Consider reviewing these holdings for a possible reduction in allocation.</p>
+            <div id="verdict-negative-list">
+                <span class="verdict-empty">No results yet.</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="verdict-neutral" id="verdict-neutral-list"></div>
+
+        <p class="verdict-disclaimer">
+            These are sentiment-based research signals, not personalized
+            financial advice or predictions of future returns. Consider
+            fundamentals, risk tolerance, and diversification before trading.
+        </p>
+    </div>
+            <!-- Overall Portfolio Card -->
+            <div class="glass-card summary-card">
+                <div>
+                    <span style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Weighted Portfolio Conviction</span>
+                    <h2 id="portfolio-score-num" style="font-size: 2.2rem; margin-top: 0.2rem;">0.00</h2>
+                </div>
+                <div>
+                    <span id="portfolio-sentiment-badge" class="score-badge">Neutral</span>
+                </div>
+            </div>
+
+            <!-- Ticker Breakdown Table -->
+            <div class="glass-card">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Sentiment Score Breakdown & Ensemble Contributions</h3>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Weight</th>
+                                <th>FinBERT (40%)</th>
+                                <th>ReyZer (30%)</th>
+                                <th>VADER (15%)</th>
+                                <th>TextBlob (15%)</th>
+                                <th>Ticker Score</th>
+                                <th>Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticker-results-body">
+                            <!-- Dynamic ticker rows populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- News Headlines Feed -->
+            <div class="glass-card">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Analyzed Financial Headlines</h3>
+                <div id="headlines-container">
+                    <!-- Dynamic headline items populated here -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="year"></span> Sentock. Informational financial NLP workspace.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/analyze.js"></script>
+</body>
+</html>
